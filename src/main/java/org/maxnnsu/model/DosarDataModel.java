@@ -1,5 +1,6 @@
 package org.maxnnsu.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DosarDataModel {
     String requestDocumentName;
     Date requestDate;
