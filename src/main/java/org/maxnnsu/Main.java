@@ -10,11 +10,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -42,14 +43,14 @@ public class Main {
                 PDDocument document = PDDocument.load(inputStream);
                 hash = generatePDDocumentHash(document);
                 System.out.println("Document hash: " + hash + "\n");
-                if (isPdfProcessed(document.hashCode())) {
+                if (isPdfProcessed(hash)) {
                     System.out.println("already processed!\n" + url);
-                    shutdownH2Server();
-                    return;
+                    text="";
+                }else {
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    text = stripper.getText(document);
+                    document.close();
                 }
-                PDFTextStripper stripper = new PDFTextStripper();
-                text = stripper.getText(document);
-                document.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -65,7 +66,7 @@ public class Main {
             parseDosarData(text).forEach(H2DatabaseManager::insertDosarData);
             System.out.println("Data processing has been finished. Elapsed time: " + timer.stop());
             if (hash != 0) {
-                H2DatabaseManager.setPdfEntry(hash, new java.sql.Date(new Date().toInstant().toEpochMilli()));
+                H2DatabaseManager.setPdfEntry(hash, new Date(Instant.now().getEpochSecond()));
             }
         }
 
@@ -75,7 +76,6 @@ public class Main {
                 System.out.println("H2 Web Server will be available next " + webServerLifeTime + "min(s)");
                 long timeMins = Long.parseLong(webServerLifeTime);
                 Thread.sleep( timeMins * 60000);
-                System.out.println("H2 Web Server will be shut down now!");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -106,7 +106,7 @@ public class Main {
             }
             if (parts.length > 3) {//TODO: should cover existing records
                 dosarDataModel.setConclusionDocumentName(parts[3]);
-                dosarDataModel.setActualReviewDate(new Date());
+                dosarDataModel.setActualReviewDate(new Date(Instant.now().getEpochSecond()));
 
 
             }
@@ -118,13 +118,13 @@ public class Main {
 
     private static Date parseData(String dateString) {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        Date date;
         try {
-            date = format.parse(dateString);
+            java.util.Date utilDate = format.parse(dateString);
+            return new java.sql.Date(utilDate.getTime());
         } catch (ParseException e) {
-            date = null;
+            e.printStackTrace();
         }
-        return date;
+        return null;
     }
 
     private static boolean isPdfProcessed(int hash) {
@@ -171,6 +171,7 @@ public class Main {
 
     private static void shutdownH2Server() {
         if (Objects.nonNull(h2Serv)) {
+            System.out.println("H2 Web Server will be shutdown now!");
             h2Serv.stop();
         }
     }
