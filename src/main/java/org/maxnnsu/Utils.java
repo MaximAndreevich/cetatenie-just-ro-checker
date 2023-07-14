@@ -47,7 +47,7 @@ public class Utils {
         Properties properties = new Properties();
         try (InputStream inputStream = Main.class.getResourceAsStream("/configuration.properties")) {
             properties.load(inputStream);
-            if(Objects.isNull(properties.getProperty("testMode"))){
+            if (Objects.isNull(properties.getProperty("testMode"))) {
                 throw new RuntimeException("required property: testMode - is missing");
             }
         } catch (IOException e) {
