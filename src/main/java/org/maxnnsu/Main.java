@@ -45,8 +45,8 @@ public class Main {
                 System.out.println("Document hash: " + hash + "\n");
                 if (isPdfProcessed(hash)) {
                     System.out.println("already processed!\n" + url);
-                    text="";
-                }else {
+                    text = "";
+                } else {
                     PDFTextStripper stripper = new PDFTextStripper();
                     text = stripper.getText(document);
                     document.close();
@@ -71,17 +71,17 @@ public class Main {
         }
 
         String dosarRequestNumber = properties.getProperty("dosarNumber", "");
-        if(StringUtils.isNotEmpty(dosarRequestNumber)){
+        if (StringUtils.isNotEmpty(dosarRequestNumber)) {
             DosarDataModel requestedModel = H2DatabaseManager.selectDosarDataByRequestDocumentName(dosarRequestNumber);
             System.out.println("Your request : " + requestedModel.toString());
         }
 
         String webServerLifeTime = properties.getProperty("h2.keepwebserverMin", "./src/main/resources/db/");
-        if(Objects.nonNull(webServerLifeTime) && Integer.parseInt(webServerLifeTime) > 0){
+        if (Objects.nonNull(webServerLifeTime) && Integer.parseInt(webServerLifeTime) > 0) {
             try {
                 System.out.println("H2 Web Server will be available next " + webServerLifeTime + "min(s)");
                 long timeMins = Long.parseLong(webServerLifeTime);
-                Thread.sleep( timeMins * 60000);
+                Thread.sleep(timeMins * 60000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

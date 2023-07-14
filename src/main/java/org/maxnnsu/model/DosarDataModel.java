@@ -28,16 +28,16 @@ public class DosarDataModel {
         this.actualReviewDate = resultSet.getDate("actual_review_date");
     }
 
-    public int getRecordSize(){
+    public int getRecordSize() {
 
         int result = 0;
-        if (StringUtils.isNotEmpty(String.valueOf(actualReviewDate)) && !"null".equals(String.valueOf(actualReviewDate))){
+        if (StringUtils.isNotEmpty(String.valueOf(actualReviewDate)) && !"null".equals(String.valueOf(actualReviewDate))) {
             result = 5;
         }
-        if (StringUtils.isNotEmpty(String.valueOf(originalReviewDate)) && !"null".equals(String.valueOf(actualReviewDate))){
+        if (StringUtils.isNotEmpty(String.valueOf(originalReviewDate)) && !"null".equals(String.valueOf(actualReviewDate))) {
             result = 3;
         }
-        if(StringUtils.isNotEmpty(requestDocumentName)){
+        if (StringUtils.isNotEmpty(requestDocumentName)) {
             result = 2;
         }
         return result;

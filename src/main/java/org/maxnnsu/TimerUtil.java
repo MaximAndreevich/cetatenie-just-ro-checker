@@ -1,4 +1,5 @@
 package org.maxnnsu;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -6,7 +7,7 @@ import java.util.Objects;
 public class TimerUtil {
     private Instant startTime;
 
-    public TimerUtil(){
+    public TimerUtil() {
         start();
     }
 
@@ -19,7 +20,7 @@ public class TimerUtil {
     }
 
     public String stop() {
-        if (Objects.isNull(startTime)){
+        if (Objects.isNull(startTime)) {
             return "0 sec";
         }
         Instant endTime = Instant.now();

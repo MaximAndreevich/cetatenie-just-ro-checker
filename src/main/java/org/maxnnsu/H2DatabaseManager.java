@@ -1,5 +1,5 @@
 package org.maxnnsu;
-import org.h2.tools.Server;
+
 import org.maxnnsu.model.DosarDataModel;
 import org.maxnnsu.model.PdfHistory;
 
@@ -9,8 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +39,7 @@ public class H2DatabaseManager {
                              "date DATE" +
                              ")"
              )
-             ) {
+        ) {
             statement.executeUpdate();
             statement2.executeUpdate();
         } catch (SQLException e) {
@@ -85,11 +83,11 @@ public class H2DatabaseManager {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            if(isDuplicateEntryException(e)){
+            if (isDuplicateEntryException(e)) {
                 updateDosarData(dosarDataModel);
                 return;
             }
-            if(isDBLocked(e)){
+            if (isDBLocked(e)) {
                 System.exit(1);
             }
             e.printStackTrace();
@@ -98,32 +96,32 @@ public class H2DatabaseManager {
 
     public static void setPdfEntry(int hash, Date date) {
         try (Connection connection = DriverManager.getConnection(DB_URL);
-        PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO pdf_history (hash, date) VALUES (?, ?)"
-        )) {
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT INTO pdf_history (hash, date) VALUES (?, ?)"
+             )) {
             statement.setInt(1, hash);
             statement.setDate(2, date);
             statement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
 
-    }
+        }
     }
 
     public static List<PdfHistory> getAllPdfEntries() {
         List<PdfHistory> entries = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(DB_URL);
-        PreparedStatement statement = connection.prepareStatement(
-                "SELECT * FROM pdf_history"
-        )){
-        ResultSet resultSet = statement.executeQuery();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM pdf_history"
+             )) {
+            ResultSet resultSet = statement.executeQuery();
 
-        while (resultSet.next()) {
-            int hash = resultSet.getInt("hash");
-            Date date = resultSet.getDate("date");
-            PdfHistory entry = new PdfHistory(hash, date);
-            entries.add(entry);
-        }
-        }catch (SQLException e){
+            while (resultSet.next()) {
+                int hash = resultSet.getInt("hash");
+                Date date = resultSet.getDate("date");
+                PdfHistory entry = new PdfHistory(hash, date);
+                entries.add(entry);
+            }
+        } catch (SQLException e) {
 
         }
 
