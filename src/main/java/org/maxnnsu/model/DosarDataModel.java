@@ -1,6 +1,7 @@
 package org.maxnnsu.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Date;
@@ -9,6 +10,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Data
+@NoArgsConstructor
 public class DosarDataModel {
     String requestDocumentName;
     Date requestDate;
@@ -16,65 +18,12 @@ public class DosarDataModel {
     Date actualReviewDate;
     String conclusionDocumentName;
 
-    public DosarDataModel(ResultSet resultSet) throws SQLException, SQLException {
+    public DosarDataModel(ResultSet resultSet) throws SQLException {
         this.requestDocumentName = resultSet.getString("request_document_name");
         this.requestDate = resultSet.getDate("request_date");
         this.originalReviewDate = resultSet.getDate("original_review_date");
         this.conclusionDocumentName = resultSet.getString("conclusion_document_name");
         this.actualReviewDate = resultSet.getDate("actual_review_date");
-    }
-
-    public DosarDataModel(){
-
-    }
-
-    public DosarDataModel(String requestDocumentName, Date requestDate, Date originalReviewDate,
-                          String conclusionDocumentName, Date actualReviewDate) {
-        this.requestDocumentName = requestDocumentName;
-        this.requestDate = requestDate;
-        this.originalReviewDate = originalReviewDate;
-        this.conclusionDocumentName = conclusionDocumentName;
-        this.actualReviewDate = actualReviewDate;
-    }
-
-    public void setRequestDocumentName(String requestDocumentName) {
-        this.requestDocumentName = requestDocumentName;
-    }
-
-    public String getRequestDocumentName() {
-        return requestDocumentName;
-    }
-
-    public Date getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
-
-    public Date getOriginalReviewDate() {
-        return originalReviewDate;
-    }
-
-    public void setOriginalReviewDate(Date originalReviewDate) {
-        this.originalReviewDate = originalReviewDate;
-    }
-
-    public Date getActualReviewDate() {
-        return actualReviewDate;
-    }
-
-    public void setActualReviewDate(Date actualReviewDate) {
-        this.actualReviewDate = actualReviewDate;
-    }
-
-    public String getConclusionDocumentName() {
-        return conclusionDocumentName;
-    }
-
-    public void setConclusionDocumentName(String conclusionDocumentName) {
-        this.conclusionDocumentName = conclusionDocumentName;
     }
 
     public int getRecordSize(){
