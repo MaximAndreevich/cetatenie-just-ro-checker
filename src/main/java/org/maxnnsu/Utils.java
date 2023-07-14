@@ -4,8 +4,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
+import java.util.Properties;
 
 public class Utils {
 
@@ -42,4 +45,16 @@ public class Utils {
         return value;
     }
 
+    public static Properties loadAppProperties() {
+        Properties properties = new Properties();
+        try (InputStream inputStream = Main.class.getResourceAsStream("/configuration.properties")) {
+            properties.load(inputStream);
+            if(Objects.isNull(properties.getProperty("testMode"))){
+                throw new RuntimeException("required property: testMode - is missing");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties;
+    }
 }
