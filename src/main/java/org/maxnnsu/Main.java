@@ -63,9 +63,9 @@ public class Main {
             shutdownH2Server();
             return;
         }
-
+        TimerUtil timer = new TimerUtil();
         parseDosarData(text).forEach(H2DatabaseManager::insertDosarData);
-        System.out.println("Data processing has been finished");
+        System.out.println("Data processing has been finished. Elapsed time: " + timer.stop());
 
         if (hash != 0) {
             H2DatabaseManager.setPdfEntry(hash, new java.sql.Date(new Date().toInstant().toEpochMilli()));
@@ -137,7 +137,7 @@ public class Main {
         File file = new File(url);
         try {
             PDDocument document = PDDocument.load(file);
-            int hash = generatePDDocumentHash(document);
+            hash = generatePDDocumentHash(document);
             System.out.println("Document hash: " + hash);
             if (isPdfProcessed(hash)) {
                 System.out.println("already processed!\n" + url);
