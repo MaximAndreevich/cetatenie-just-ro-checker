@@ -59,17 +59,16 @@ public class Main {
             text = processTestData();
         }
 
-        if (StringUtils.isEmpty(text)) {
-            shutdownH2Server();
-            return;
+        if (StringUtils.isNotEmpty(text)) {
+            TimerUtil timer = new TimerUtil();
+            System.out.println("Data processing has been started.");
+            parseDosarData(text).forEach(H2DatabaseManager::insertDosarData);
+            System.out.println("Data processing has been finished. Elapsed time: " + timer.stop());
+            if (hash != 0) {
+                H2DatabaseManager.setPdfEntry(hash, new java.sql.Date(new Date().toInstant().toEpochMilli()));
+            }
         }
-        TimerUtil timer = new TimerUtil();
-        parseDosarData(text).forEach(H2DatabaseManager::insertDosarData);
-        System.out.println("Data processing has been finished. Elapsed time: " + timer.stop());
 
-        if (hash != 0) {
-            H2DatabaseManager.setPdfEntry(hash, new java.sql.Date(new Date().toInstant().toEpochMilli()));
-        }
         String webServerLifeTime = properties.getProperty("h2.keepwebserverMin", "./src/main/resources/db/");
         if(Objects.nonNull(webServerLifeTime) && Integer.parseInt(webServerLifeTime) > 0){
             try {
