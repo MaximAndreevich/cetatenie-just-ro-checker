@@ -112,4 +112,15 @@ public class DosarDataModel {
                 Objects.equals(conclusionDocumentName, other.conclusionDocumentName) &&
                 Objects.equals(actualReviewDate, other.actualReviewDate);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("requestDocumentName=").append(requestDocumentName != null ? requestDocumentName : "null").append(", ");
+        sb.append("requestDate=").append(requestDate != null ? requestDate.toString() : "null").append(", ");
+        sb.append("originalReviewDate=").append(originalReviewDate != null ? originalReviewDate.toString() : "null").append(", ");
+        sb.append("conclusionDocumentName=").append(conclusionDocumentName != null ? conclusionDocumentName : "null").append(", ");
+        sb.append("actualReviewDate=").append(actualReviewDate != null ? actualReviewDate.toString() : "null");
+        return sb.toString();
+    }
 }

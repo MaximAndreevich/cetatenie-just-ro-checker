@@ -70,6 +70,12 @@ public class Main {
             }
         }
 
+        String dosarRequestNumber = properties.getProperty("dosarNumber", "");
+        if(StringUtils.isNotEmpty(dosarRequestNumber)){
+            DosarDataModel requestedModel = H2DatabaseManager.selectDosarDataByRequestDocumentName(dosarRequestNumber);
+            System.out.println("Your request : " + requestedModel.toString());
+        }
+
         String webServerLifeTime = properties.getProperty("h2.keepwebserverMin", "./src/main/resources/db/");
         if(Objects.nonNull(webServerLifeTime) && Integer.parseInt(webServerLifeTime) > 0){
             try {
