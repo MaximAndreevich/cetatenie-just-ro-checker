@@ -28,9 +28,7 @@ public class Utils {
             byte[] hash = md.digest();
 
             // Преобразование байтового массива хеша в целочисленное значение
-            int hashCode = byteArrayToInt(hash);
-
-            return hashCode;
+            return byteArrayToInt(hash);
         } catch (IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
             return 0; // или любое другое значение по умолчанию в случае ошибки
