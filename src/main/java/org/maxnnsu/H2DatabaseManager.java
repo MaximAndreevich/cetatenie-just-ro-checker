@@ -130,17 +130,24 @@ public class H2DatabaseManager {
         return entries;
     }
 
-    private static Date parseData(String dateString){
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-        Date date;
-        try {
-            java.util.Date utilDate = format.parse(dateString);
-            return new java.sql.Date(utilDate.getTime());
-        }catch (ParseException e){
+    public static DosarDataModel selectDosarDataByRequestDocumentName(String requestDocumentName) {
+        DosarDataModel dosarDataModel = null;
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     "SELECT * FROM dosar_data WHERE request_document_name = ?"
+             )) {
+            selectStatement.setString(1, requestDocumentName);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                dosarDataModel = new DosarDataModel(resultSet);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return dosarDataModel;
     }
+
     private static boolean isDuplicateEntryException(SQLException e) {
         return "23505".equals(e.getSQLState());
     }
