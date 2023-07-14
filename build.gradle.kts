@@ -15,6 +15,7 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     compileOnly("org.projectlombok:lombok:1.18.28")
+    annotationProcessor("org.projectlombok:lombok:1.18.28")
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
