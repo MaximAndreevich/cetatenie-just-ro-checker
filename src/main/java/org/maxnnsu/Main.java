@@ -126,7 +126,7 @@ public class Main {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         try {
             java.util.Date utilDate = format.parse(dateString);
-            return new java.sql.Date(utilDate.getTime());
+            return new Date(utilDate.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }

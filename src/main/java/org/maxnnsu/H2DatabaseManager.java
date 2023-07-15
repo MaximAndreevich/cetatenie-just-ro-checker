@@ -10,11 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 public class H2DatabaseManager {
-    //private static final String DB_URL = "jdbc:h2:./db/dosardata.db";
     private static final String DB_INIT_URL = "jdbc:h2:./src/main/resources/db/dosardata.db";
     private static final String DB_URL = "jdbc:h2:./dosardata.db";
 
@@ -27,7 +26,9 @@ public class H2DatabaseManager {
                              "request_date DATE," +
                              "original_review_date DATE," +
                              "conclusion_document_name VARCHAR(255)," +
-                             "actual_review_date DATE" +
+                             "actual_review_date DATE," +
+                             "created DATE," +
+                             "updated DATE" +
                              ")"
              );
              PreparedStatement statement2 = connection.prepareStatement(
@@ -50,8 +51,8 @@ public class H2DatabaseManager {
              PreparedStatement statement = connection.prepareStatement(
                      "INSERT INTO dosar_data " +
                              "(request_document_name, request_date, original_review_date, " +
-                             "conclusion_document_name, actual_review_date) " +
-                             "VALUES (?, ?, ?, ?, ?)"
+                             "conclusion_document_name, actual_review_date, created, updated) " +
+                             "VALUES (?, ?, ?, ?, ?, ?, ?)"
              )) {
 
             statement.setString(1, dosarDataModel.getRequestDocumentName());
@@ -59,6 +60,8 @@ public class H2DatabaseManager {
             statement.setDate(3, dosarDataModel.getOriginalReviewDate());
             statement.setString(4, dosarDataModel.getConclusionDocumentName());
             statement.setDate(5, dosarDataModel.getActualReviewDate());
+            statement.setDate(6, getCurrentDate());
+            statement.setDate(7, getCurrentDate());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -139,7 +142,7 @@ public class H2DatabaseManager {
                      "SELECT * FROM dosar_data WHERE request_document_name = ?"
              );
              PreparedStatement updateStatement = connection.prepareStatement(
-                     "UPDATE dosar_data SET actual_review_date = ?, original_review_date = ?, conclusion_document_name = ? WHERE request_document_name = ?"
+                     "UPDATE dosar_data SET actual_review_date = ?, original_review_date = ?, conclusion_document_name = ?, updated = ? WHERE request_document_name = ?"
              )) {
             selectStatement.setString(1, dosarDataModel.getRequestDocumentName());
             ResultSet resultSet = selectStatement.executeQuery();
@@ -150,12 +153,20 @@ public class H2DatabaseManager {
                     updateStatement.setDate(1, dosarDataModel.getActualReviewDate());
                     updateStatement.setDate(2, dosarDataModel.getOriginalReviewDate());
                     updateStatement.setString(3, dosarDataModel.getConclusionDocumentName());
-                    updateStatement.setString(4, dosarDataModel.getRequestDocumentName());
+
+                    updateStatement.setDate(4, getCurrentDate());
+                    updateStatement.setString(5, dosarDataModel.getRequestDocumentName());
                     updateStatement.executeUpdate();
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static Date getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        java.util.Date currentDate = calendar.getTime();
+        return new Date(currentDate.getTime());
     }
 }
