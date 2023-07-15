@@ -3,7 +3,6 @@ package org.maxnnsu.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -19,6 +18,8 @@ public class DosarDataModel {
     Date originalReviewDate;
     Date actualReviewDate;
     String conclusionDocumentName;
+    Date created;
+    Date updated;
 
     public DosarDataModel(ResultSet resultSet) throws SQLException {
         this.requestDocumentName = resultSet.getString("request_document_name");
@@ -26,6 +27,8 @@ public class DosarDataModel {
         this.originalReviewDate = resultSet.getDate("original_review_date");
         this.conclusionDocumentName = resultSet.getString("conclusion_document_name");
         this.actualReviewDate = resultSet.getDate("actual_review_date");
+        this.created = resultSet.getDate("created");
+        this.updated = resultSet.getDate("updated");
     }
 
     @Override
