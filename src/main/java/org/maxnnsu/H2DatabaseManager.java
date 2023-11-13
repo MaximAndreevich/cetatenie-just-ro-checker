@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class H2DatabaseManager {
@@ -35,7 +34,9 @@ public class H2DatabaseManager {
                      "CREATE TABLE IF NOT EXISTS pdf_history (" +
                              "id INT AUTO_INCREMENT PRIMARY KEY," +
                              "hash INTEGER," +
-                             "date DATE" +
+                             "name VARCHAR(255)," +
+                             "date DATE," +
+                             "status VARCHAR(255)" +
                              ")"
              )
         ) {
@@ -76,16 +77,18 @@ public class H2DatabaseManager {
         }
     }
 
-    public static void setPdfEntry(int hash, Date date) {
+    public static void setPdfEntry(int hash, String name, Date date, String status) {
         try (Connection connection = DriverManager.getConnection(DB_URL);
              PreparedStatement statement = connection.prepareStatement(
-                     "INSERT INTO pdf_history (hash, date) VALUES (?, ?)"
+                     "INSERT INTO pdf_history (hash,name, date, status) VALUES (?, ?, ?, ?)"
              )) {
             statement.setInt(1, hash);
-            statement.setDate(2, date);
+            statement.setString(2, name);
+            statement.setDate(3, date);
+            statement.setString(4, status);
             statement.executeUpdate();
         } catch (SQLException e) {
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -100,7 +103,8 @@ public class H2DatabaseManager {
             while (resultSet.next()) {
                 int hash = resultSet.getInt("hash");
                 Date date = resultSet.getDate("date");
-                PdfHistory entry = new PdfHistory(hash, date);
+                //TODO: handle table data
+                PdfHistory entry = new PdfHistory(hash, resultSet.getString("name"), date, resultSet.getString("status"));
                 entries.add(entry);
             }
         } catch (SQLException e) {
@@ -129,11 +133,11 @@ public class H2DatabaseManager {
     }
 
     private static boolean isDuplicateEntryException(SQLException e) {
-        return "23505".equals(e.getSQLState());
+        return e.getErrorCode() == 23505;
     }
 
     private static boolean isDBLocked(SQLException e) {
-        return "90020".equals(e.getSQLState());
+        return e.getErrorCode() == 90020;
     }
 
     private static void updateDosarData(DosarDataModel dosarDataModel) {
@@ -153,7 +157,6 @@ public class H2DatabaseManager {
                     updateStatement.setDate(1, dosarDataModel.getActualReviewDate());
                     updateStatement.setDate(2, dosarDataModel.getOriginalReviewDate());
                     updateStatement.setString(3, dosarDataModel.getConclusionDocumentName());
-
                     updateStatement.setDate(4, getCurrentDate());
                     updateStatement.setString(5, dosarDataModel.getRequestDocumentName());
                     updateStatement.executeUpdate();
@@ -164,9 +167,46 @@ public class H2DatabaseManager {
         }
     }
 
+
+    public static DosarDataModel deleteDosarDataByRequestDocumentName(String requestDocumentName) {
+        DosarDataModel dosarDataModel = null;
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     "delete FROM dosar_data WHERE request_document_name = ?"
+             )) {
+            selectStatement.setString(1, requestDocumentName);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                dosarDataModel = new DosarDataModel(resultSet);
+                System.out.println(" record " + dosarDataModel.getConclusionDocumentName() + " removed");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dosarDataModel;
+    }
+
+    public static DosarDataModel updateDosarDataByRequestDocumentName(String requestDocumentName) {
+        DosarDataModel dosarDataModel = null;
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     "delete FROM dosar_data WHERE request_document_name = ?"
+             )) {
+            selectStatement.setString(1, requestDocumentName);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                dosarDataModel = new DosarDataModel(resultSet);
+                System.out.println(" record " + dosarDataModel.getConclusionDocumentName() + " removed");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dosarDataModel;
+    }
+
     private static Date getCurrentDate() {
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date currentDate = calendar.getTime();
-        return new Date(currentDate.getTime());
+        return new Date(System.currentTimeMillis());
     }
 }
