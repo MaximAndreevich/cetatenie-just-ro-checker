@@ -14,6 +14,7 @@ dependencies {
     implementation("org.apache.pdfbox:pdfbox:2.0.24")
     implementation("com.h2database:h2:1.4.200")
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.jsoup:jsoup:1.16.2")
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
