@@ -61,7 +61,6 @@ public class Main {
                     .map(Main::verifyPdfHashIsNotInDb)
                     .filter(Objects::nonNull)
                     .toList();
-
         }
         if (testMode) {
             urlsToProcess = processTestData();
